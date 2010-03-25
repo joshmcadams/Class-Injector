@@ -6,9 +6,18 @@ use strict;
 use Attribute::Handlers;
 use Module::Load;
 
+my %DEPENDENCIES;
+
 sub UNIVERSAL::Inject :ATTR(RAWDATA) {
-  my ($package, $symbol, $referent, $attr, $data, $phase, $filename, $linenum) = @_;
-  #print "$data\n";
+  my ( $package, 
+       $symbol, 
+       $referent, 
+       $attr, 
+       $data, 
+       $phase, 
+       $filename, 
+       $linenum) = @_;
+  $DEPENDENCIES{$package}{*{$symbol}{NAME}} = $data;
 }
 
 sub new {
@@ -22,7 +31,14 @@ sub get {
 
   load $target if (not defined $main::{$target . '::'});
 
-  return $target->new();
+  my $method = 'new';
+  my $argument;
+  if (exists $DEPENDENCIES{$target}) {
+    $method = (keys %{$DEPENDENCIES{$target}})[0];
+    $argument = $self->get($DEPENDENCIES{$target}{$method});
+  }
+
+  return $target->$method($argument);
 }
 
 =head1 NAME
