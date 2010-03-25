@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Class::Injector;
 
-sub new : Inject {
+sub new {
   return bless {}, $_[0];
 }
 
