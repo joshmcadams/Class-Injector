@@ -3,6 +3,28 @@ package Class::Injector;
 use warnings;
 use strict;
 
+use Attribute::Handlers;
+use Module::Load;
+
+sub UNIVERSAL::Inject :ATTR(RAWDATA) {
+  my ($package, $symbol, $referent, $attr, $data, $phase, $filename, $linenum) = @_;
+  #print "$data\n";
+}
+
+sub new {
+  return bless {}, $_[0];
+}
+
+sub get {
+  my ($self, $target) = @_;
+
+  die 'target must be specified' unless defined $target;
+
+  load $target if (not defined $main::{$target . '::'});
+
+  return $target->new();
+}
+
 =head1 NAME
 
 Class::Injector - The great new Class::Injector!
