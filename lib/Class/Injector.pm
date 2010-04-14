@@ -16,7 +16,7 @@ sub UNIVERSAL::Inject :ATTR(RAWDATA) {
        $data, 
        $phase, 
        $filename, 
-       $linenum) = @_;
+       $linenum ) = @_;
   $DEPENDENCIES{$package}{*{$symbol}{NAME}} = $data;
 }
 
